@@ -26,7 +26,7 @@ class SmithyDB:
                 host=host_name,
                 user=usr_name,
                 passwd=pw,
-                database="armorskills"
+                database="armorSkills"
             )
             cn = self.db
             self.cursor = cn.cursor()
@@ -108,7 +108,7 @@ class SmithyDB:
         :return: None
         """
         try:
-            self.cursor.executemany('INSERT INTO skilldesc(skillId, descText) VALUES (%s, %s);', skill_desc_list)
+            self.cursor.executemany('INSERT INTO skillDesc(skillId, descText) VALUES (%s, %s);', skill_desc_list)
             self.db.commit()
         except mysql.connector.Error as err:
             print("Error: {}".format(err))
