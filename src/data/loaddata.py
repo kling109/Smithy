@@ -12,6 +12,8 @@ import sys
 from smithybase import SmithyDB
 import re
 
+PASSFILE = "../../../gcppassfile.txt"
+
 HELM_NAMES = ['Helm', 'Vertex', 'Vizor', 'Mask', 'Hat', 'Scarf', 'Hood', 'Visage', 'Headgear',
               'Hair-tie', 'Brain', 'Lobos', 'Chaoshroom', 'Archbun', 'Headdress', 'Feather']
 CHEST_NAMES = ['Mail', 'Thorax', 'Ribplate', 'Vest', 'Garb', 'Cover', 'Jacket',
@@ -51,8 +53,7 @@ def load_skills(sm: SmithyDB, filepath: str):
             name = entry[0]
             skillnu = sm.get_skill_by_name(name)
             desc = entry[3]
-            print(skillnu, desc)
-            skilldesc.append((skillnu, desc))
+            skilldesc.append((skillnu[0][0], desc))
 
         sm.add_skill_desc(skilldesc)
 
@@ -194,7 +195,7 @@ def load_decos(sm: SmithyDB, filepath: str):
 if __name__ == "__main__":
     loadtype = sys.argv[1]
     loadpath = sys.argv[2]
-    sm = SmithyDB('../../../passfile.txt')
+    sm = SmithyDB(PASSFILE)
     if loadtype == "skill":
         load_skills(sm, loadpath)
     elif loadtype == "armor":

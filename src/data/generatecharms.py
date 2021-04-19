@@ -10,6 +10,8 @@ import sys
 from smithybase import SmithyDB
 from faker import Faker
 
+PASSFILE = "../../../gcppassfile.txt"
+
 def gen_charms(n: int):
     """
     Generate a set of n random valid charms.
@@ -17,7 +19,7 @@ def gen_charms(n: int):
     :param n: The number of charms to generate.
     :return: A dictionary of charms
     """
-    sm = SmithyDB('../../../passfile.txt')
+    sm = SmithyDB(PASSFILE)
     Faker.seed(0)
     fake = Faker()
     charms = {}
@@ -30,7 +32,7 @@ def gen_charms(n: int):
         num_skills = fake.pyint(min_value=1, max_value=4)
         skills = []
         for _ in range(num_skills):
-            skillnu = fake.pyint(min_value=105, max_value=208)
+            skillnu = fake.pyint(min_value=1, max_value=104)
             skillva = fake.pyint(min_value=1, max_value=sm.get_skill(skillnu)[0][2])
             skills.append((skillnu, skillva))
 
@@ -58,7 +60,7 @@ def write_charms(charms: dict, filename: str):
     :param filename: The name of the file to write to
     :return: None
     """
-    sm = SmithyDB('../../../passfile.txt')
+    sm = SmithyDB(PASSFILE)
     with open(filename, 'w') as testcharms:
         cols = "Name\tUserId\tSlots\tSkill1\tSkill2\tSkill3\tSkill4\n"
         testcharms.write(cols)
@@ -80,10 +82,8 @@ def write_charms(charms: dict, filename: str):
 if __name__ == "__main__":
     path = sys.argv[1]
     x = sys.argv[2]
-    print(sys.argv)
     try:
         numcharms = int(x)
-        print(path[-4:])
         if path[-4:] != ".tsv":
             print("Warning: The values will be output as a tab-separated value file.")
             print("It is recommended to name your file 'filename.tsv' to avoid confusion.")
