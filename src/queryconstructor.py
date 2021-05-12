@@ -1,12 +1,13 @@
 # Smithy
 # queryconstructor.py
 #
-# Last Date Modified: 05/11/2021
+# Last Date Modified: 05/12/2021
 #
 # Description:
 # A set of methods to contruct queries dynamically.
 
 from itertools import chain
+
 
 def generate_helm(skills, max_deco, num_results):
     skill_totals = ""
@@ -327,7 +328,6 @@ def generate_charm(skills, max_deco, user_id, num_results):
     deco_args = skills * 3
 
     return query, q_deco, query_args, deco_args
-    return query, query_args
 
 
 def assemble(skills, helm_subq, chest_subq, vamb_subq, fauld_subq, greave_subq, charm_subq, skill_limits, helm_dec,
@@ -425,11 +425,16 @@ def assemble(skills, helm_subq, chest_subq, vamb_subq, fauld_subq, greave_subq, 
     return query
 
 
-def construct_query(skills : list, skill_maxlv : list, user_id : str, max_deco : int, num_results : int):
+def construct_query(skills: list, skill_max_lv: list, user_id: int, max_deco: int, num_results: int):
     """
     Produces a string query to be used with the MySQL engine.
 
+
     :param skills: A list containing all the desirable skills and their levels.
+    :param skill_max_lv: The maximum level for each skill
+    :param user_id: the user's Discord ID
+    :param max_deco: The maximum decoration size which is usable
+    :param num_results: the number of results to show.
     :return: String
     """
     helm_subq, helm_dec, helm_args, helm_dec_args = generate_helm(skills, max_deco, num_results)
@@ -438,7 +443,7 @@ def construct_query(skills : list, skill_maxlv : list, user_id : str, max_deco :
     fauld_subq, fauld_dec, fauld_args, fauld_dec_args = generate_fauld(skills, max_deco, num_results)
     greave_subq, greave_dec, greaves_args, greave_dec_args = generate_greave(skills, max_deco, num_results)
     charm_subq, charm_dec, charms_args, charm_dec_args = generate_charm(skills, max_deco, user_id, num_results)
-    skill_limits, skill_limits_args = generate_skill_limits(skills, skill_maxlv, num_results)
+    skill_limits, skill_limits_args = generate_skill_limits(skills, skill_max_lv, num_results)
     total_query = assemble(skills, helm_subq, chest_subq, vamb_subq, fauld_subq, greave_subq, charm_subq, skill_limits,
                            helm_dec, chest_dec, vamb_dec, fauld_dec, greave_dec, charm_dec)
     deco_args = list(chain(*[[skills[i]]*18 for i in range(len(skills))]))

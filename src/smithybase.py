@@ -1,7 +1,7 @@
 # Smithy
 # smithybase.py
 #
-# Last Date Modified: 05/11/2021
+# Last Date Modified: 05/12/2021
 #
 # Description:
 # A MySQL wrapper class that allows the user to create a database object
@@ -9,7 +9,6 @@
 
 import queryconstructor
 import mysql.connector
-import time
 from os import path
 
 
@@ -19,10 +18,10 @@ class SmithyDB:
 
     def __init__(self, info: str):
         if path.exists(info):
-            with open(info) as passfile:
-                host_name = passfile.readline()
-                usr_name = passfile.readline()
-                pw = passfile.readline()
+            with open(info) as pass_file:
+                host_name = pass_file.readline()
+                usr_name = pass_file.readline()
+                pw = pass_file.readline()
 
             self.db = mysql.connector.connect(
                 host=host_name,
@@ -47,9 +46,9 @@ class SmithyDB:
 
         :param name: Name of the charm
         :param uid: Discord ID of the user adding the charm
-        :param sslot: number of small slots on the charm
-        :param mslot: number of medium slots on the charm
-        :param lslot: number of large slots on the charm
+        :param slot1: The size of the first slot on the charm
+        :param slot2: The size of the second slot on the charm
+        :param slot3: The size of the third slot on the charm
         :param skill1id: id of the first skill
         :param skill1val: number of points of the first skill
         :param skill2id: id of the second skill
@@ -73,7 +72,7 @@ class SmithyDB:
             self.db.rollback()
             raise ValueError
 
-    def delete_charm(self, name : str, uid : int):
+    def delete_charm(self, name: str, uid: int):
         """
         Soft-deletes a charm for a given user.
 
@@ -89,7 +88,7 @@ class SmithyDB:
             self.db.rollback()
             raise ValueError
 
-    def update_charm(self, name: str, uid: int, column_name : str, new_value):
+    def update_charm(self, name: str, uid: int, column_name: str, new_value):
         """
         Allows users to update the skill values on a given charm.
 
@@ -196,31 +195,31 @@ class SmithyDB:
             print("Error: {}".format(err))
             return []
 
-    def get_skill(self, skId: int):
+    def get_skill(self, sk_id: int):
         """
         A method that allows the user to query a skill by its id.
 
-        :param skId: The id of the skill to search for.
+        :param sk_id: The id of the skill to search for.
         :return: list of query results
         """
         try:
-            self.cursor.execute('SELECT * FROM skills WHERE skillId = %s;', (skId,))
+            self.cursor.execute('SELECT * FROM skills WHERE skillId = %s;', (sk_id,))
             records = self.cursor.fetchall()
             return list(records)
         except mysql.connector.Error as err:
             print("Error: {}".format(err))
             return []
 
-    def get_decos(self, sklist: list):
+    def get_decos(self, sk_list: list):
         """
         Returns a list of decorations based on a desired set of skills.
 
-        :param sklist: a list of skill ID's to search
+        :param sk_list: a list of skill ID's to search
         :return: a list of decoration results
         """
         try:
             result = []
-            for skill in sklist:
+            for skill in sk_list:
                 self.cursor.execute('SELECT * FROM deco WHERE skillId = %s;', (skill,))
                 result = result + self.cursor.fetchall()
             return result
@@ -352,28 +351,29 @@ class SmithyDB:
             print("Error: {}".format(err))
             return []
 
-    def get_armor_by_skills(self, sklist: list, max_lvs : list, user_id : int, num_results : int):
+    def get_armor_by_skills(self, sk_list: list, max_lvs: list, user_id: int, num_results: int):
         """
         Returns a list of armor sets based on a set of desired skills.
 
-        :param sklist: A list of skills to search for.
+        :param sk_list: A list of skills to search for.
         :param max_lvs: A user-defined set of maximum skill levels
         :param user_id: The ID of the user in question, used to find specific charms.
+        :param num_results: The number of results to show
         :return: list of helms
         """
         try:
-            decodata = self.get_decos(sklist)
+            decodata = self.get_decos(sk_list)
             sslots = 1 if len([s for s in decodata if s[2] == 1]) > 0 else 0
             mslots = 2 if len([s for s in decodata if s[2] == 2]) > 0 else 0
             lslots = 3 if len([s for s in decodata if s[2] == 3]) > 0 else 0
             max_slot = max(lslots, mslots, sslots)
             sk_max = []
 
-            for s in range(len(sklist)):
-                skill = self.get_skill(sklist[s])[0]
+            for s in range(len(sk_list)):
+                skill = self.get_skill(sk_list[s])[0]
                 sk_max.append(skill[2] if skill[2] < max_lvs[s] else max_lvs[s])
 
-            query, args = queryconstructor.construct_query(sklist, sk_max, user_id, max_slot, num_results)
+            query, args = queryconstructor.construct_query(sk_list, sk_max, user_id, max_slot, num_results)
             self.cursor.execute(query, tuple(args))
             results = self.cursor.fetchall()
             return results
