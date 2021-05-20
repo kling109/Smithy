@@ -10,6 +10,9 @@ from itertools import chain
 
 
 def generate_helm(skills, max_deco, num_results):
+    """
+    Generates a subquery for the helm.
+    """
     skill_totals = ""
     skill_limits = ""
     skill_orders = ""
@@ -61,6 +64,9 @@ def generate_helm(skills, max_deco, num_results):
 
 
 def generate_chest(skills, max_deco, num_results):
+    """
+    Generates a subquery for the chest.
+    """
     skill_totals = ""
     skill_limits = ""
     skillset = "("
@@ -112,6 +118,9 @@ def generate_chest(skills, max_deco, num_results):
 
 
 def generate_vamb(skills, max_deco, num_results):
+    """
+    Generates a subquery for the vambraces.
+    """
     skill_totals = ""
     skill_limits = ""
     skill_orders = ""
@@ -163,6 +172,9 @@ def generate_vamb(skills, max_deco, num_results):
 
 
 def generate_fauld(skills, max_deco, num_results):
+    """
+    Generates a subquery for the faulds.
+    """
     skill_totals = ""
     skill_limits = ""
     skill_orders = ""
@@ -214,6 +226,9 @@ def generate_fauld(skills, max_deco, num_results):
 
 
 def generate_greave(skills, max_deco, num_results):
+    """
+    Generates a subquery for the greaves.
+    """
     skill_totals = ""
     skill_limits = ""
     skill_orders = ""
@@ -265,6 +280,9 @@ def generate_greave(skills, max_deco, num_results):
 
 
 def generate_skill_limits(skills, skill_maxlv, num_results):
+    """
+    Sets limitations for the overall query.
+    """
     skill_limits = ""
     skill_order = ""
     for i in range(len(skills)):
@@ -280,6 +298,9 @@ def generate_skill_limits(skills, skill_maxlv, num_results):
 
 
 def generate_charm(skills, max_deco, user_id, num_results):
+    """
+    Generates a subquery for the charm.
+    """
     skill_totals = ""
     skill_limits = ""
     skill_orders = ""
@@ -332,6 +353,9 @@ def generate_charm(skills, max_deco, user_id, num_results):
 
 def assemble(skills, helm_subq, chest_subq, vamb_subq, fauld_subq, greave_subq, charm_subq, skill_limits, helm_dec,
              chest_dec, vamb_dec, fauld_dec, greave_dec, charm_dec):
+    """
+    Assembles all the subqueries into a fully-fledged query.
+    """
     skill_totals = ""
     skill_totals_label = ""
     for i in range(len(skills)):
