@@ -12,7 +12,7 @@ import sys
 from smithybase import SmithyDB
 import re
 
-PASSFILE = "../../passfile.txt"
+PASSFILE = "../../gcppassfile.txt"
 
 HELM_NAMES = ['Helm', 'Vertex', 'Vizor', 'Mask', 'Hat', 'Scarf', 'Hood', 'Visage', 'Headgear',
               'Hair-tie', 'Brain', 'Lobos', 'Chaoshroom', 'Archbun', 'Headdress', 'Feather']
@@ -91,7 +91,7 @@ def load_armor(sm: SmithyDB, filepath: str):
             if len(entry) > 2:
                 for i in range(2, len(entry)):
                     skni = entry[i].split('Lv.')[0].strip()
-                    skidi = sm.get_skills_by_name([(skni,)])
+                    skidi = sm.get_skills_by_name([skni])
                     skvi = entry[i].split('Lv.')[1].strip()
                     skills.append((skidi[0][0], skvi))
             for i in range(6 - len(entry)):
