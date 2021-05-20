@@ -99,8 +99,7 @@ class SmithyDB:
         :return: None
         """
         try:
-            self.cursor.execute('UPDATE charm SET '
-                                + column_name + '= %s '
+            self.cursor.execute('UPDATE charm SET ' + column_name + ' = %s '
                                 'WHERE charmName = %s AND userId = %s AND isDeleted = 0;',
                                 (new_value, name, uid))
             self.db.commit()
@@ -210,6 +209,20 @@ class SmithyDB:
             print("Error: {}".format(err))
             return []
 
+    def get_skill_desc(self, skill_id):
+        """
+        Finds the description of a skill from its skill Id.
+        :param skill_id: The ID of the skill to display
+        :return: list of query results
+        """
+        try:
+            self.cursor.execute('SELECT descText FROM skilldesc WHERE skillId = %s;', (skill_id,))
+            records = self.cursor.fetchall()
+            return records
+        except mysql.connector.Error as err:
+            print("Error: {}".format(err))
+            return []
+
     def get_decos(self, sk_list: list):
         """
         Returns a list of decorations based on a desired set of skills.
@@ -222,6 +235,20 @@ class SmithyDB:
             for skill in sk_list:
                 self.cursor.execute('SELECT * FROM deco WHERE skillId = %s;', (skill,))
                 result = result + self.cursor.fetchall()
+            return result
+        except mysql.connector.Error as err:
+            print("Error: {}".format(err))
+            return []
+
+    def get_all_decos(self):
+        """
+        Returns all the decorations in the database.
+
+        :return: a list of decorations.
+        """
+        try:
+            self.cursor.execute('SELECT * FROM deco;')
+            result = self.cursor.fetchall()
             return result
         except mysql.connector.Error as err:
             print("Error: {}".format(err))
@@ -382,6 +409,21 @@ class SmithyDB:
             print("Error: {}".format(err))
             return []
 
+    def get_deco_counts(self):
+        """
+        Returns the count of a particular armor piece with skills.
+
+        :param armor_type: The type of armor to check
+        :return: list of skills with armor counts.
+        """
+        try:
+            self.cursor.execute('SELECT slotSize, COUNT(*) FROM deco GROUP BY slotSize;')
+            results = self.cursor.fetchall()
+            return results
+        except mysql.connector.Error as err:
+            print("Error: {}".format(err))
+            return []
+
 
 if __name__ == "__main__":
     db = SmithyDB("../../passfile.txt")
@@ -389,12 +431,13 @@ if __name__ == "__main__":
     #     start_time = time.time()
     #     res = db.get_armor_by_skills([89, 90, 91], [3, 3, 6], 351847321245586963, i)
     #     print(str(i) + ": --- %s seconds ---" % (time.time() - start_time))
-    res = db.get_armor_by_skills([89, 90, 91], [3, 3, 6], 999999999999999999, 2)
-    print(res)
+    # res = db.get_armor_by_skills([89, 90, 91], [3, 3, 6], 999999999999999999, 2)
+    # print(res)
     # for r in res:
     #     print(r)
     # db.delete_charm('testNvnAvOpy', 351847321245586963)
     # print(db.get_greaves())
     # print(db.get_charms(999999999999999999))
     # print(db.get_skill(90))
+    print(db.get_deco_counts())
 

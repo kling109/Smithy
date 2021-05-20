@@ -67,8 +67,9 @@ class QueryProcessor:
             elif value_to_modify == 'skill':
                 skill_index = new_val[0]
                 new_skill = new_val[1]
+                skill_id = self.armordb.get_skills_by_name([new_skill])[0][0]
                 new_skill_val = new_val[2]
-                self.armordb.update_charm(charm_name, uid, 'skill'+str(skill_index)+'Id', new_skill)
+                self.armordb.update_charm(charm_name, uid, 'skill'+str(skill_index)+'Id', skill_id)
                 self.armordb.update_charm(charm_name, uid, 'skill'+str(skill_index)+'Val', new_skill_val)
         except ValueError as err:
             print("Charm was unable to be modified.")
@@ -172,10 +173,42 @@ class QueryProcessor:
             print("Unable to query the set.")
             return []
 
+    def show_decorations(self):
+        """
+        Displays all the decorations in the given database.
+
+        :return: list of dictionaries of decoration info, list of decorations by slot size
+        """
+        try:
+            deco_set = []
+            decos = self.armordb.get_all_decos()
+            deco_counts = self.armordb.get_deco_counts()
+            for d in decos:
+                dec = {}
+                dec["name"] = d[1]
+                dec["slot"] = d[2]
+                dec["skillName"] = self.armordb.get_skill(d[3])[0][1]
+                dec["skillVal"] = d[4]
+                deco_set.append(dec)
+            return deco_set, deco_counts
+        except ValueError as err:
+            print("Unable to query the set.")
+            return []
+
+    def get_skill_desc(self, skill_name):
+        try:
+            skill_id = self.armordb.get_skills_by_name([skill_name])[0][0]
+            skill_desc = self.armordb.get_skill_desc(skill_id)[0][0]
+            return skill_desc
+        except ValueError as err:
+            print("Unable to get a skill description.")
+            return ""
+
 
 if __name__ == "__main__":
     # Need to reformat the main search query a bit; move the left joins to be part of another subquery.
     sm = QueryProcessor("../../passfile.txt")
-    res = sm.search_armor_set({'Weakness Exploit': 3, 'Critical Boost': 3, 'Attack Boost': 7}, 999999999999999999, returned_results=3)
-    for r in res:
-        print(r)
+    # res = sm.search_armor_set({'Weakness Exploit': 3, 'Critical Boost': 3, 'Attack Boost': 7}, 999999999999999999, returned_results=3)
+    # for r in res:
+    #     print(r)
+    print(sm.show_decorations())
